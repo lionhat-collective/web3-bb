@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  address   String
+  chainType String
+  ensName   String
+  nonce     String
+  radlib    Radlib?
+  answers   Answer[]
+}
+
+model Radlib {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  hostId      String   @unique
+  host        User     @relation(fields: [hostId], references: [id])
+  questionSet String
+
+  question        Question[]
+  usedQuestionIds String[]
+  answers         Answer[]
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  radlibId  String
+  radlib    Radlib   @relation(fields: [radlibId], references: [id])
+  text      String
+  answers   Answer[]
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+  radlibId   String
+  radlib     Radlib   @relation(fields: [radlibId], references: [id])
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  text       String
+  votes      Int
+}
