@@ -9,7 +9,7 @@ export const loader: LoaderFunction = async ({
     return {}
 }
 
-function PostRoute() {
+function ForumRoute() {
     const data = useLoaderData<LoaderData>()
     console.log(data)
     return (
@@ -19,4 +19,4 @@ function PostRoute() {
     )
 }
 
-export default PostRoute;
+export default ForumRoute;
