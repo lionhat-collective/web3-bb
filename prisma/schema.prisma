@@ -14,47 +14,57 @@ model User {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime
+  avatar    String
+  username  String @unique
+  description String?
   address   String
   chainType String
-  ensName   String
   nonce     String
-  radlib    Radlib?
-  answers   Answer[]
+  role      String
+  posts     Post[]
 }
 
-model Radlib {
+model Category {
   id          String   @id @default(cuid())
   createdAt   DateTime @default(now())
   updatedAt   DateTime
-  hostId      String   @unique
-  host        User     @relation(fields: [hostId], references: [id])
-  questionSet String
-
-  question        Question[]
-  usedQuestionIds String[]
-  answers         Answer[]
+  name        String
+  slug        String   @unique
+  description String?
+  forums      Forum[]
 }
 
-model Question {
+model Forum {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  name        String
+  description String?
+  slug        String   @unique()
+  posts       Post[]
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  parentId    String?
+  parent      Forum?   @relation("subForums", fields: [parentId], references: [id])
+  subForums   Forum[]  @relation("subForums")
+
+  @@index([id, slug, parentId, categoryId])
+}
+
+model Post {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime
-  radlibId  String
-  radlib    Radlib   @relation(fields: [radlibId], references: [id])
-  text      String
-  answers   Answer[]
-}
+  title     String
+  content   String
+  slug      String   @unique @default(cuid())
+  parentId  String?
+  parent    Post?    @relation("posts", fields: [parentId], references: [id])
+  posts     Post[]   @relation("posts")
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+  forumId   String
+  forum     Forum    @relation(fields: [forumId], references: [id])
 
-model Answer {
-  id         String   @id @default(cuid())
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime
-  radlibId   String
-  radlib     Radlib   @relation(fields: [radlibId], references: [id])
-  questionId String
-  question   Question @relation(fields: [questionId], references: [id])
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  text       String
-  votes      Int
+  @@index([slug, id])
 }

@@ -40,14 +40,14 @@ export default function App() {
   const data = useLoaderData<LoaderData>()
   const walletConnectors = useMemo(() => connectors(data.infuraId), [data])
   return (
-    <html lang="en">
+    <html lang="en" className="bg-gray-100">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className='bg-gradient-to-r from-purple-500 to-pink-500'>
+      <body>
         <WAGMIProvider
           connectors={walletConnectors}
         >
