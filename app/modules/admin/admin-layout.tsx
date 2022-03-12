@@ -14,6 +14,7 @@ import {
   CollectionIcon,
   XIcon,
 } from '@heroicons/react/outline'
+import { Link } from 'remix'
 
 const navigation = [
   { name: 'Dashboard', href: '/admin', icon: HomeIcon, current: true },
@@ -95,9 +96,9 @@ export function AdminLayout({ children }: PropsWithChildren<{}>) {
                   </div>
                   <nav className="mt-5 px-2 space-y-1">
                     {navigation.map((item) => (
-                      <a
+                      <Link
                         key={item.name}
-                        href={item.href}
+                        to={item.href}
                         className={classNames(
                           item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
                           'group flex items-center px-2 py-2 text-base font-medium rounded-md'
@@ -111,7 +112,7 @@ export function AdminLayout({ children }: PropsWithChildren<{}>) {
                           aria-hidden="true"
                         />
                         {item.name}
-                      </a>
+                      </Link>
                     ))}
                   </nav>
                 </div>

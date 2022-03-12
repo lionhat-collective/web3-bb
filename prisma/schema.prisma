@@ -11,17 +11,15 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  avatar    String
+  address   String @id
   username  String @unique
+  avatar    String
   description String?
-  address   String
   chainType String
-  nonce     String
   role      String
   posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
 model Category {
@@ -61,8 +59,8 @@ model Post {
   parentId  String?
   parent    Post?    @relation("posts", fields: [parentId], references: [id])
   posts     Post[]   @relation("posts")
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id])
+  authorAddress  String
+  author    User     @relation(fields: [authorAddress], references: [address])
   forumId   String
   forum     Forum    @relation(fields: [forumId], references: [id])
 

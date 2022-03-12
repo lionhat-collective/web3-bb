@@ -1,44 +1,43 @@
 import { useCallback } from "react"
 import { SiweMessage } from "siwe"
-import { useAccount, useNetwork, UserRejectedRequestError, useSignMessage } from "wagmi"
+import { Connector, useConnect, UserRejectedRequestError } from "wagmi"
 
-export function useLogin() {
-    const [{ data: accountData }] = useAccount()
-    const [{ data: networkData }] = useNetwork()
-    const [, signMessage] = useSignMessage()
+export type LoginReturnType = {
+    message: SiweMessage
+    signature: string
+}
+type Login = (nonce: string, connector: Connector) => unknown
 
-    return useCallback(async (nonce: string) => {
+type OnConnectFn = (data: LoginReturnType) => Promise<void> | void
+
+type UseLoginReturnType = [connectors: Connector[], login: Login]
+
+export function useLogin(onConnect: OnConnectFn): UseLoginReturnType {
+    const [{ data, error }, connect] = useConnect()
+    const login = useCallback<Login>(async (nonce, connector: Connector) => {
         try {
-            const address = accountData?.address
-            const chainId = networkData?.chain?.id
-            if (
-                typeof address === 'undefined' ||
-                typeof chainId === 'undefined'
-            ) {
-                return {
-                    message: null,
-                    signature: null,
-                }
+            const connectorResponse = await connect(connector)
+            if (!connectorResponse.data) {
+                throw connectorResponse.error ?? new Error("Something went wrong")
             }
+            const { account, chain } = connectorResponse.data
+            const address = account
+            const chainId = chain?.id
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
-                statement: `Sign into CrazyCryptoParty`,
+                statement: `Sign into Web3BB`,
                 uri: window.location.origin,
                 version: '1',
                 chainId,
                 nonce,
             })
-            const signature = await signMessage({
-                message: message.prepareMessage()
-            })
-            if (signature.error) {
-                throw signature.error
-            }
-            return {
+            const signer = await connector.getSigner()
+            const signature = await signer.signMessage(message.prepareMessage())
+            return onConnect({
                 message,
-                signature: signature.data
-            }
+                signature,
+            })
         } catch (err) {
             if (err instanceof Error) {
                 throw err.message
@@ -49,5 +48,6 @@ export function useLogin() {
                 throw 'Something went wrong. Please try again.'
             }
         }
-    }, [accountData, networkData, signMessage])
+    }, [connect, onConnect])
+    return [data.connectors, login]
 }

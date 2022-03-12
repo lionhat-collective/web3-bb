@@ -1,5 +1,5 @@
-import { Category, Forum, Prisma } from '@prisma/client'
-import { LoaderFunction, useLoaderData } from 'remix'
+import { Category, Prisma } from '@prisma/client'
+import { Link, LoaderFunction, useLoaderData } from 'remix'
 import { db } from '~/utils/db.server'
 import {
   ChatIcon,
@@ -24,7 +24,6 @@ type CategoryType = (Category & {
       title: string;
       _count: Prisma.PostCountOutputType;
       author: {
-        id: string;
         username: string;
         address: string;
       };
@@ -54,7 +53,6 @@ export let loader: LoaderFunction = async () => {
               title: true,
               author: {
                 select: {
-                  id: true,
                   username: true,
                   address: true,
                 }
@@ -87,7 +85,8 @@ export default function Index() {
       <div className="space-y-4">
         {data.categories.map(category => {
           return (
-            <section key={category.id}
+            <section
+              key={category.id}
               className="rounded-b-sm bg-slate-50"
             >
               <header className="px-3 py-2 bg-slate-400 rounded-t-sm">
@@ -103,34 +102,36 @@ export default function Index() {
                       <li key={forum.id} className='flex flex-col px-3 py-2 border-b last:border-0'>
                         <div className='flex flex-row items-center'>
                           <div className='flex flex-col'>
-                            <a
-                              href={`/f/${forum.slug}`}
+                            <Link
+                              to={`/f/${forum.slug}`}
                               className="font-semibold"
-                            >{forum.name}</a>
+                            >{forum.name}</Link>
                             {forum.description && <small>{forum.description}</small>}
                           </div>
 
                           {recentPost && (
                             <div>
                               <strong>Last Post</strong>
-                              <a href={`/p/${recentPost.id}`}>{recentPost.title}</a>
+                              <Link to={`/p/${recentPost.id}`}>{recentPost.title}</Link>
                               by {recentPost.author.username}
                             </div>
                           )}
                         </div>
                         {forum.subForums.length > 0 && (
                           <div className='flex flex-row flex-wrap items-center sm:space-x-3'>
-                            <small className='font-semibold'>Sub-Forums:</small>
+                            <small className='font-semibold'>
+                              Sub-Forums
+                              <ChatIcon className='w-4 h-4 inline align-text-bottom ml-1' />
+                            </small>
                             {forum.subForums.map(subForum => {
                               return (
-                                <a
+                                <Link
                                 key={subForum.id}
-                                href={`/f/${subForum.slug}`}
+                                to={`/f/${subForum.slug}`}
                                 className="hover:bg-slate-800 hover:text-slate-50 text-sm py-0.5 px-1 bg-slate-300 text-slate-700"
                                 >
-                                  <ChatIcon className='w-4 h-4 inline align-text-bottom mr-1' />
                                   {subForum.name}
-                                </a>
+                                </Link>
                               )
                             })}
                           </div>
