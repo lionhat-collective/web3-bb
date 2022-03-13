@@ -21,7 +21,7 @@ type CategoryType = (Category & {
     }[]
     posts: {
       id: string;
-      title: string;
+      name: string;
       _count: Prisma.PostCountOutputType;
       author: {
         username: string;
@@ -50,7 +50,7 @@ export let loader: LoaderFunction = async () => {
             take: 1,
             select: {
               id: true,
-              title: true,
+              name: true,
               author: {
                 select: {
                   username: true,
@@ -112,7 +112,7 @@ export default function Index() {
                           {recentPost && (
                             <div>
                               <strong>Last Post</strong>
-                              <Link to={`/p/${recentPost.id}`}>{recentPost.title}</Link>
+                              <Link to={`/p/${recentPost.id}`}>{recentPost.name}</Link>
                               by {recentPost.author.username}
                             </div>
                           )}

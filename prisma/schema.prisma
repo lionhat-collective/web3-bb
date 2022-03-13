@@ -11,58 +11,58 @@ datasource db {
 }
 
 model User {
-  address   String @id
-  username  String @unique
-  avatar    String
+  address     String    @id
+  username    String    @unique
+  avatar      String
   description String?
-  chainType String
-  role      String
-  posts     Post[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime
+  chainType   String
+  role        String
+  posts       Post[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
 }
 
 model Category {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
   name        String
-  slug        String   @unique
+  slug        String    @unique
   description String?
   forums      Forum[]
 }
 
 model Forum {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime?
   name        String
   description String?
-  slug        String   @unique()
+  slug        String    @unique()
   posts       Post[]
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
   parentId    String?
-  parent      Forum?   @relation("subForums", fields: [parentId], references: [id])
-  subForums   Forum[]  @relation("subForums")
+  parent      Forum?    @relation("subForums", fields: [parentId], references: [id])
+  subForums   Forum[]   @relation("subForums")
 
   @@index([id, slug, parentId, categoryId])
 }
 
 model Post {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  title     String
-  content   String
-  slug      String   @unique @default(cuid())
-  parentId  String?
-  parent    Post?    @relation("posts", fields: [parentId], references: [id])
-  posts     Post[]   @relation("posts")
-  authorAddress  String
-  author    User     @relation(fields: [authorAddress], references: [address])
-  forumId   String
-  forum     Forum    @relation(fields: [forumId], references: [id])
+  id            String    @id @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+  name          String
+  content       String
+  slug          String    @unique @default(cuid())
+  parentId      String?
+  parent        Post?     @relation("posts", fields: [parentId], references: [id])
+  posts         Post[]    @relation("posts")
+  authorAddress String
+  author        User      @relation(fields: [authorAddress], references: [address])
+  forumId       String
+  forum         Forum     @relation(fields: [forumId], references: [id])
 
   @@index([slug, id])
 }

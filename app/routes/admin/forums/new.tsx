@@ -28,7 +28,7 @@ export const action: ActionFunction = async ({
     if (typeof parentSlug !== 'string' && parentSlug !== null) {
         throw new Error('Invalid parent submitted')
     }
-    slug = `${categorySlug}/${parentSlug ? `${kebabCase(parentSlug)}/` : ''}${kebabCase(slug ?? name)}`
+    slug = parentSlug ? `${parentSlug}/${kebabCase(slug ?? name)}` : `${categorySlug}/${kebabCase(slug ?? name)}`
     const category = await db.category.findUnique({
         where: { slug: categorySlug },
         select: { id: true }
@@ -125,7 +125,7 @@ function AdminForumNewPage() {
         }
     }, [])
     const slug = useMemo(() => kebabCase(name), [name])
-    const slugPath = useMemo(() => `${category}/${parent ? `${kebabCase(parent)}/` : ''}`, [category, parent])
+    const slugPath = useMemo(() => parent ? `${parent}/` : `${category}/`, [category, parent])
     const forums = useMemo(() => data.forums.filter(forum => forum.category.slug === category), [category, data])
     console.log(forums)
     return (
