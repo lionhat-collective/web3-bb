@@ -127,7 +127,6 @@ function AdminForumNewPage() {
     const slug = useMemo(() => kebabCase(name), [name])
     const slugPath = useMemo(() => parent ? `${parent}/` : `${category}/`, [category, parent])
     const forums = useMemo(() => data.forums.filter(forum => forum.category.slug === category), [category, data])
-    console.log(forums)
     return (
         <>
             <div>

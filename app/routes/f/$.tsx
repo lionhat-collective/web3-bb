@@ -1,10 +1,13 @@
 import { Category, Forum, Post, User } from "@prisma/client";
 import { LoaderFunction, useLoaderData } from "remix";
+import { ForumCategory, ForumForums } from "~/modules/forum-theme-classic/pages";
 import { db } from "~/utils/db.server";
 
 
 type ForumWithCategory = Forum & {
     category: Category
+    parent: Forum | null
+    subForums: Forum[]
 }
 
 type PostWithAuthor = Post & {
@@ -39,6 +42,7 @@ const findForumBySlug = async (slug: string): Promise<Resource> => {
         include: {
             category: true,
             subForums: true,
+            parent: true,
             posts: {
                 include: {
                     author: true,
@@ -56,6 +60,8 @@ const findPostBySlug = async (slug: string): Promise<Resource> => {
         include: {
             forum: {
                 include: {
+                    subForums: true,
+                    parent: true,
                     category: true,
                 }
             },
@@ -128,6 +134,15 @@ function ForumRoute() {
     if (!data.resource) {
         return <div>404</div>
     }
+
+    if ((data.resource as ForumWithCategoryAndPosts).categoryId) {
+        return <ForumForums forum={data.resource as ForumWithCategoryAndPosts} />
+    }
+
+    if ((data.resource as CategoryWithForums)) {
+        return <ForumCategory category={data.resource as CategoryWithForums} />
+    }
+
     return (
         <div>
             <h1>{data.resource?.name}</h1>
