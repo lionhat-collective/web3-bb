@@ -19,7 +19,7 @@ import { getSession } from "./sessions";
 import { db } from "./utils/db.server";
 
 export const meta: MetaFunction = () => {
-  return { title: "RADLIB" };
+  return { title: "WEB3BB" };
 };
 
 export const links: LinksFunction = () => {
