@@ -1,7 +1,14 @@
-export function ForumPost() {
+import { TextEditor } from "~/modules/common/components/text-editor"
+
+type ForumPostProps = {
+    post: unknown
+    user: unknown
+}
+
+export function ForumPost({ post, user }: ForumPostProps) {
     return (
         <div>
-            <h1>Forum Post</h1>
+            <TextEditor />
         </div>
     )
 }
