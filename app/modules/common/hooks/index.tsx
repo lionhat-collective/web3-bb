@@ -1,0 +1,1 @@
+// @index(\.ts): export * from ${relpath}

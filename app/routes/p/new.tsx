@@ -1,6 +1,8 @@
 import { TextEditor } from "~/modules/common/components/text-editor"
+import { useDefaultTextEditor } from "~/modules/common/hooks/use-default-text-editor"
 
 function PostNewRoute() {
+    const editor = useDefaultTextEditor(`Hello World, the grass is green and the sky is blue!`)
     return (
         <>
             <header>
@@ -28,7 +30,7 @@ function PostNewRoute() {
                             Body
                         </label>
                         <div className='mt-1 rounded-md bg-slate-50 shadow-sm'>
-                            <TextEditor />
+                            <TextEditor editor={editor} />
                         </div>
                     </div>
                 </form>
